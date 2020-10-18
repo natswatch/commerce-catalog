@@ -8,14 +8,13 @@ router.get('/', (req, res) => {
   // find all products
   Product.findAll({
     attributes: ['id', 'product_name', 'price', 'stock','category_id'],
+      // including its associated Category and Tag data
     include: [
     {
-      model: Category,
-      attributes: ['id', 'category_name']
+      model: Category
     },
     {
-      model: Tag,
-      attributes: ['tag_name']
+      model: Tag
     }
   ]
   })
@@ -24,24 +23,22 @@ router.get('/', (req, res) => {
     console.log(err);
     res.status(500).json(err);
   })
-  // be sure to include its associated Category and Tag data
 });
 
-// get one product
+// get one product by its id
 router.get('/:id', (req, res) => {
   Product.findOne({
-    attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
+    attributes: { exclude: [ 'categoryId' ] },
     where: {
       id: req.params.id
     },
+    // including its associated category and tag data
     include: [
     {
-      model: Category,
-      attributes: ['id', 'category_name']
+      model: Category
     },
     {
-      model: Tag,
-      attributes: ['id', 'tag_name']
+      model: Tag
     }
     ]
   })
@@ -56,8 +53,6 @@ router.get('/:id', (req, res) => {
     console.log(err);
     res.status(500).json(err);
   })
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
 });
 
 // create new product
@@ -97,7 +92,6 @@ router.post('/', (req, res) => {
     });
 });
 
-// update product
 router.put('/:id', (req, res) => {
   // update product data
   Product.update(req.body, {
